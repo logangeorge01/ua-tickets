@@ -1,34 +1,26 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { auth } from 'firebase/app';
+import { auth, firestore } from 'firebase/app';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { User } from '../types';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-   user$: Observable<{
-      uid: string;
-      email: string;
-      photoURL?: string;
-      displayName?: string;
-      offers?: {
-         game: string;
-         price: number;
-      }[];
-   }>;
+   user$: Observable<User>;
 
    constructor(
       private afAuth: AngularFireAuth,
-      private afs: AngularFirestore,
+      private db: AngularFirestore,
       private router: Router
    ) {
       this.user$ = this.afAuth.authState.pipe(
          switchMap(user => {
-         return user ? this.afs.collection('users').doc(user.uid).valueChanges() : of(null);
+         return user ? this.db.collection('users').doc(user.uid).valueChanges() : of(null);
          })
       ) as any;
    }
@@ -39,14 +31,20 @@ export class AuthService {
       return this.updateUserData(credential.user);
    }
 
-   private updateUserData(user) {
-      const userRef: AngularFirestoreDocument = this.afs.doc(`users/${user.uid}`);
+   private async updateUserData(user) {
+      const userRef: AngularFirestoreDocument = this.db.collection('users').doc(user.uid);
+
+      const code = await this.db.collection('ucount').doc('ucount').get().toPromise().then(docSS => {
+         docSS.ref.update({ucount: firestore.FieldValue.increment(1)});
+         return ('00' + docSS.data().ucount).slice(-3);
+      });
 
       const data = {
          uid: user.uid,
          email: user.email,
          displayName: user.displayName,
-         photoURL: user.photoURL
+         photoURL: user.photoURL,
+         code
       };
 
       return userRef.set(data, { merge: true });

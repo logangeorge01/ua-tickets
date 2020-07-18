@@ -1,0 +1,36 @@
+<ng-container *ngIf="game && (auth.user$ | async) as user">
+   <div style="font:25px Helvetica Neue;display:inline-block;">Sell Ticket<button style="margin-left:20px;vertical-align:middle;" type="button" (click)="cancel()">Cancel</button></div><br>
+   <div style="border: 2px solid #000;border-radius:20px;padding:20px;font: 20px Helvetica Neue;margin:20px;display:inline-block;">
+      <div>
+         <img style="height:27px;vertical-align:middle;" src="https://ssl.gstatic.com/onebox/media/sports/logos/IsBDxxcoXPihpAWEL7ycqg_48x48.png">
+         Alabama vs.
+         <img style="height:35px;vertical-align:middle;" [src]="game.logo">
+         {{game.team + ' on ' + game.gameday}}
+      </div>
+
+      <input type="radio" id="lower" name="lower" value="true" style="height:15px;width:15px;margin-top:15px;" [(ngModel)]="lower">
+      <label for="lower">Lower bowl</label>
+      <input type="radio" id="upper" name="lower" value="false" style="height:15px;width:15px;margin-left:20px;" [(ngModel)]="lower">
+      <label for="upper">Upper bowl</label><br>
+
+      <div style="margin-top:15px;display:inline-block;">How much would you like to list your ticket for? $</div>
+      <input type="number" placeholder="50" style="display:inline-block;margin-left:3px;width:55px;font-size:20px;" [(ngModel)]="price" required><br>
+
+      <div style="margin-top:15px;display:inline-block;">Your Venmo (to pay you when it's sold) @</div>
+      <input type="text" placeholder="your_venmo" style="display:inline-block;margin-left:3px;font-size:20px;width:200px;" [(ngModel)]="venmo" required><br>
+      
+      <button type="button" style="margin-top:15px" (click)="list(user)">List ticket</button>
+   </div>
+   <div style="font:18px Helvetica Neue;max-width:810px;">
+      <div style="font-size:25px;margin-bottom:10px;">How it works</div>
+      When someone wants to buy your ticket, they will Venmo us the amount you specified. We will 
+      then hide your ticket listing from the site and text you to transfer your ticket to our account 
+      within 15 minutes. Once you've done so, we will send you the money and transfer the ticket to the buyer. 
+      If we do not receive your ticket in 15 minutes, you will receive a strike. For strikes 1 and 2, 
+      your ticket listing will reappear on the site. On strike 3, your listing will be removed from the site 
+      and you won't be able to create a new listing until next week's game. This process ensures that 
+      transactions occur quickly and without dispute, as well as preventing students from selling tickets 
+      they do not have. If you have any further questions or problems, feel free to call or text Logan George 
+      at (913) 747-5478.
+   </div>
+</ng-container>

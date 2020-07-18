@@ -25,7 +25,7 @@ export class HomeGuard implements CanActivate {
 }
 
 @Injectable()
-export class MarketGuard implements CanActivate {
+export class AuthGuard implements CanActivate {
    constructor(
       private auth: AuthService,
       private router: Router

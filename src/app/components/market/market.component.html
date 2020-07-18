@@ -1,6 +1,40 @@
-<div style="display:inline-block;font-size:25px;margin-bottom:50px;">Marketplace<button style="margin-left:20px;" type="button" (click)="logout()">Logout</button></div><br>
+<ng-container *ngIf="(auth.user$ | async) as user">
+   <ng-container *ngIf="user.phone; else getphone">
+      <div style="font:25px Helvetica Neue;display:inline-block;margin-bottom:30px;">Marketplace<button style="margin-left:20px;vertical-align:middle;" type="button" (click)="logout()">Logout</button></div><br>
 
-<div style="display:inline-block">
-   <button id="l" style="outline:none;border:none;background:none;font-size:20px;" (click)="toggleBowl('#l', '#u')" type="button">Lower Bowl</button>
-   <button id="u" style="outline:none;border:none;background:none;font-size:20px;color:#888;" (click)="toggleBowl('#u', '#l')" type="button">Upper Bowl</button>
-</div>
+      <div *ngIf="game; else nogame" style="display:inline-block;font:18px Helvetica Neue;">
+         Upcoming game: 
+         <img [src]="game.logo" style="height:30px;vertical-align:middle;margin-left:3px;">
+         {{game.team}}
+      </div><br>
+      <ng-template #nogame>
+         <div style="font:18px Helvetica Neue;">No upcoming game</div>
+      </ng-template>
+         
+      <button *ngIf="!hasListedTicket; else viewticket" type="button" (click)="sellTicket()">Sell your ticket</button>
+      <ng-template #viewticket>
+         <button type="button" (click)="viewMyTicket()">View your listing</button>
+      </ng-template>
+
+      <div style="margin-top:30px;margin-bottom:15px;">
+         <button style="font:18px Helvetica Neue;outline:none;background:none;border:none;" (click)="toggleBowl($event.target)" type="button">Lower Bowl</button>
+         <button style="font:18px Helvetica Neue;outline:none;background:none;border:none;color:#888;" (click)="toggleBowl($event.target)" type="button">Upper Bowl</button>
+      </div>
+      
+      <ng-container *ngFor="let offer of (offers$ | async)">
+         <ng-container *ngIf="offer.lower === lowerRN">
+            <div (click)="buyTicket(offer.offerID)" style="cursor:pointer;display:inline-block;font-family:Helvetica Neue;padding:5px;border-radius:5px;border:1px solid #000;margin:2px;">
+               <b>${{offer.price}}</b> {{offer.name}}
+            </div><br>
+         </ng-container>
+      </ng-container>
+
+   </ng-container>
+
+   <ng-template #getphone>
+      <div style="font:25px Helvetica Neue">Before You Begin</div>
+      <div style="font-family:Helvetica Neue;margin-top:10px">We need your phone number to contact you when you successfully bought or sold a ticket.</div>
+      <input type="tel" placeholder="1234567890" size="11" maxlength="10" style="margin-top:30px;font-size:20px;" [(ngModel)]="phone" required>
+      <button type="button" style="font-size:20px" (click)="updatePhone(user.uid)">Go</button>
+   </ng-template>
+</ng-container>

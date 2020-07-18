@@ -1,0 +1,38 @@
+<ng-container *ngIf="!loading">
+   <ng-container *ngIf="(offer$ | async) as offer; else unavail">
+      <div style="font:25px Helvetica Neue;display:inline-block;">Purchase Ticket<button style="margin-left:20px;vertical-align:middle;" type="button" (click)="cancel()">Cancel</button></div><br>
+      <div style="border: 2px solid #000;border-radius:20px;padding:20px;font: 20px Helvetica Neue;margin:20px;display:inline-block;">
+         <div>
+            <img style="height:27px;vertical-align:middle;" src="https://ssl.gstatic.com/onebox/media/sports/logos/IsBDxxcoXPihpAWEL7ycqg_48x48.png">
+            Alabama vs.
+            <img style="height:35px;vertical-align:middle;" [src]="game.logo">
+            {{game.team + ' on ' + game.gameday}}
+         </div>
+         <div style="margin-bottom:5px">{{offer.lower ? 'Lower Bowl' : 'Upper Bowl'}}</div>
+         <div>{{'$' + offer.price + ' from ' + offer.name}}</div>
+      </div>
+      <div *ngIf="!ownTicket; else own" style="font: 18px Helvetica Neue;max-width:810px;margin-top:15px;">
+         To buy this ticket, <b>Venmo @uatickets exactly ${{(offer.price * 1.1).toFixed(2)}}</b> 
+         (10% fee) with the message <b>{{code}}</b>. We will refund you if an incorrect amount is sent.
+         <div style="font-family:Helvetica Neue;font-size:25px;margin-top:35px;margin-bottom:10px;">How it works</div>
+         When we've received your payment, we will hide the ticket listing from the site and alert 
+         the seller to transfer the ticket to our account within 15 minutes. Once they have done so, we 
+         will transfer the ticket to you and the payment to the seller. If we have not received the ticket 
+         in 15 minutes, we will refund all ${{(offer.price * 1.1).toFixed(2)}} back to you. 
+         This process guarantees that you will have either the ticket or your money back in less than 15 minutes. 
+         If you have any questions or problems, feel free to call or text Logan George at (913) 747-5478.
+      </div>
+
+      <ng-template #own>
+         <div style="font:18px Helvetica Neue;max-width:810px;margin-top:15px;">
+            This is your own ticket. We don't let you buy your own ticket, otherwise things would get pretty confusing. 
+            If you would like to update or delete your listing, you can
+            <button type="button" style="display:inline;vertical-align:middle;" (click)="viewMyTicket()">View your listing</button>
+         </div>
+      </ng-template>
+   </ng-container>
+</ng-container>
+
+<ng-template #unavail>
+   <div style="font-family:Helvetica Neue">Sorry, this ticket has been removed or sold. Try another one!</div>
+</ng-template>
